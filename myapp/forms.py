@@ -8,3 +8,5 @@ class DropDownForm(forms.Form):
         ('NoN', 'NoN'),
     ]
     choices = forms.ChoiceField(choices=OPTIONS, label="Choose an option")
+    contact_email = forms.EmailField(label="Your Email")
+    comment = forms.CharField(widget=forms.Textarea, label="Your Message")

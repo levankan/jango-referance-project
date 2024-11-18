@@ -19,21 +19,27 @@
         <button type="submit">Submit</button>
     </form>
 
-    <!-- Display the random ID -->
-    
-
     <!-- Display the selected option if form is submitted -->
     {% if selected_option %}
         <h1>Selected project Is: {{ selected_option }}, ID: 2024_{{ id }}</h1>
     {% endif %}
 
     <h1>Database Records</h1>
-        <ul>
-            {% for record in data %}
-                <li>{{ record }}</li>
-            {% empty %}
-                <li>No records found.</li>
-            {% endfor %}
-        </ul>
+    <ul>
+        {% for record in data %}
+            <li>Record {{ record.id }}: {{ record.selected_option }} (Random ID: {{ record.random_id }})</li>
+        {% empty %}
+            <li>No records found.</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Comment Area</h1>
+    <ul>
+        {% for info in contct_info %}
+            <li>Email: {{ info.email_area }} - Comment: {{ info.text_area }}</li>
+        {% empty %}
+            <li>There are no comments.</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
