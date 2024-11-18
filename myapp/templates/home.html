@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+
+    <!-- Link to the CSS file -->
+    <link rel="stylesheet" href="{% static 'myapp/css/styles.css' %}">
+    <title>Dropdown Form</title>
+</head>
+<body>
+    <h1>Welcome to the Dropdown Form</h1>
+
+    <!-- Display the form -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Renders the form as paragraphs -->
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Display the random ID -->
+    
+
+    <!-- Display the selected option if form is submitted -->
+    {% if selected_option %}
+        <h1>Selected project Is: {{ selected_option }}, ID: 2024_{{ id }}</h1>
+    {% endif %}
+
+    <h1>Database Records</h1>
+        <ul>
+            {% for record in data %}
+                <li>{{ record }}</li>
+            {% empty %}
+                <li>No records found.</li>
+            {% endfor %}
+        </ul>
+</body>
+</html>
