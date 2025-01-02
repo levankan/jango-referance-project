@@ -1,0 +1,168 @@
+body{
+    text-align: center;
+}
+
+/* Button Style */
+button {
+    background-color: #4CAF50; /* Green background */
+    color: white;              /* White text */
+    padding: 12px 24px;        /* Padding for size */
+    font-size: 16px;           /* Font size */
+    border: none;              /* No border */
+    border-radius: 8px;        /* Rounded corners */
+    cursor: pointer;          /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth hover effect */
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: scale(1.05);     /* Slightly increase button size */
+}
+
+button:focus {
+    outline: none;             /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.8); /* Blue focus shadow */
+}
+
+button:active {
+    background-color: #388e3c; /* Even darker green when clicked */
+    transform: scale(1);        /* Reset size */
+}
+
+
+
+/* Style for the Heading */
+h1 {
+    font-family: 'Arial', sans-serif;       /* Clean, modern font */
+    font-size: 36px;                        /* Large text size */
+    font-weight: 600;                       /* Slightly bold for emphasis */
+    color: #333;                            /* Dark gray text color */
+    text-align: center;                     /* Center the heading */
+    text-transform: uppercase;              /* Uppercase letters */
+    letter-spacing: 2px;                    /* Adds spacing between letters */
+    margin-bottom: 30px;                    /* Space below the heading */
+    padding: 10px;                          /* Padding around the text */
+    background-color: #f4f4f9;              /* Light gray background */
+    border-radius: 5px;                     /* Slightly rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    transition: all 0.3s ease;              /* Smooth transition for hover effect */
+}
+
+/* Hover effect for the heading */
+h1:hover {
+    color: #4CAF50;                         /* Change text color to green on hover */
+    transform: scale(1.05);                  /* Slightly enlarge on hover */
+}
+
+
+
+/* Style for success message */
+#success-message {
+    background-color: #d4edda;  /* Light green background */
+    color: #155724;             /* Dark green text */
+    border: 1px solid #c3e6cb;  /* Light green border */
+    padding: 15px;              /* Add padding for spacing */
+    border-radius: 5px;         /* Slightly rounded corners */
+    font-size: 16px;            /* Set font size */
+    font-weight: bold;          /* Make the text bold */
+    text-align: center;         /* Center the text */
+    margin-bottom: 20px;        /* Space below the message */
+    transition: all 0.3s ease;  /* Smooth transition for hover effect */
+    opacity: 0;                 /* Initially hidden */
+    animation: fadeIn 1s forwards; /* Fade-in animation */
+}
+
+/* Style for error message */
+#error-message {
+    background-color: #f8d7da;  /* Light red background */
+    color: #721c24;             /* Dark red text */
+    border: 1px solid #f5c6cb;  /* Light red border */
+    padding: 15px;              /* Add padding for spacing */
+    border-radius: 5px;         /* Slightly rounded corners */
+    font-size: 16px;            /* Set font size */
+    font-weight: bold;          /* Make the text bold */
+    text-align: center;         /* Center the text */
+    margin-bottom: 20px;        /* Space below the message */
+    transition: all 0.3s ease;  /* Smooth transition for hover effect */
+    opacity: 0;                 /* Initially hidden */
+    animation: fadeIn 1s forwards; /* Fade-in animation */
+}
+
+/* Animation for fade-in */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Hover effect for messages */
+#success-message:hover, #error-message:hover {
+    transform: scale(1.05);     /* Slightly enlarge the message */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+
+
+#table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Table header styling */
+#thead th {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Table body styling */
+#tbody td {
+    padding: 12px;
+    border: 1px solid #ddd;
+}
+
+/* Alternating row colors */
+#tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Hover effect for rows */
+#tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+/* No records message styling */
+#tbody td[colspan="13"] {
+    text-align: center;
+    font-style: italic;
+    color: #999;
+    background-color: #fafafa;
+}
+
+/* Responsive design */
+@media screen and (max-width: 768px) {
+    #table {
+        font-size: 14px;
+    }
+    #thead th, #tbody td {
+        padding: 8px;
+    }
+}

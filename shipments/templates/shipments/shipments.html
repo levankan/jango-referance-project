@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Upload Shipments Excel</title>
+    <link rel="stylesheet" href="{% static 'shipments/css/styles.css' %}">
+
+   
+</head>
+<body>
+    <h1>Upload Shipments Excel File</h1>
+
+    <!-- Display success message -->
+    {% if success %}
+        <p id="success-message" style="color: green;">{{ success }}</p>
+    {% endif %}
+
+    <!-- Display error message -->
+    {% if error %}
+        <p id="error-message" style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Shipment Records</h2>
+    <table id = "table" border="1">
+        <thead id="thead">
+            <tr>
+                <th>Serial/Lot</th>
+                <th>Document Number</th>
+                <th>Item Number</th>
+                <th>Cross Reference</th>
+                <th>QTY</th>
+                <th>Box</th>
+                <th>Invoice</th>
+                <th>Invoice Date</th>
+                <th>Packing List</th>
+                <th>Description</th>
+                <th>Qarbon Qty</th>
+                <th>Lot Carbon</th>
+                <th>Pallet</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            {% for shipment in shipments %}
+            <tr>
+                <td>{{ shipment.serial_lot }}</td>
+                <td>{{ shipment.document_number }}</td>
+                <td>{{ shipment.item_number }}</td>
+                <td>{{ shipment.cross_reference }}</td>
+                <td>{{ shipment.qty }}</td>
+                <td>{{ shipment.box }}</td>
+                <td>{{ shipment.invoice }}</td>
+                <td>{{ shipment.invoice_date }}</td>
+                <td>{{ shipment.packing_list }}</td>
+                <td>{{ shipment.description }}</td>
+                <td>{{ shipment.qarbon_qty }}</td>
+                <td>{{ shipment.lot_carbon }}</td>
+                <td>{{ shipment.pallet }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="13">No shipment records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
