@@ -24,7 +24,7 @@
 </head>
 <body>
 
-     <div class="header">
+    <div class="header">
         <h1>Packing List</h1>
         <p>Date: {{ current_date|date:"d-m-Y" }}</p>
     </div>
@@ -48,6 +48,7 @@
         </p>
     </div>
 
+    <!-- First Table: Show all pivot rows (box, item, qty, pallet) -->
     <table>
         <thead>
             <tr>
@@ -67,41 +68,48 @@
                 <td>{{ row.count_cross_reference }}</td>
                 <td>{{ row.pallet }}</td>
             </tr>
-          {% endfor %}
+            {% endfor %}
         </tbody>
     </table>
 
+    <!-- Second Table: Show only the first row's dimension and weight -->
     {% if pivot_table %}
-    {% with pivot_table.0 as first_row %}
-    <table>
-        <thead>
-            <tr>
-                <th>Pack Content Description</th>
-                <th>Qty.</th>
-                <th>Weight (KG)</th>
-                <th>Dimension (CM)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>{{ total_qty|floatformat:0 }}</td>
-                <td>5 KG</td>
-                <td>
-                    {% if first_row.dimension_string %}
-                        {{ first_row.dimension_string }}
-                    {% else %}
-                        Unknown
-                    {% endif %}
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    {% endwith %}
+        {% with pivot_table.0 as first_row %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pack Content Description</th>
+                        <th>Qty.</th>
+                        <th>Weight (KG)</th>
+                        <th>Dimension (CM)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>{{ total_qty|floatformat:0 }}</td>
+                        <!-- Instead of hard-coded weight, use the row’s weight attribute -->
+                        <td>
+                            {% if first_row.weight %}
+                                {{ first_row.weight }} KG
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if first_row.dimension_string %}
+                                {{ first_row.dimension_string }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        {% endwith %}
     {% else %}
-    <p>No data found.</p>
+        <p>No data found.</p>
     {% endif %}
-    
 
     <div class="footer">
         <p><strong>Invoices No:</strong> {{ unique_invoices|join:", " }}</p>

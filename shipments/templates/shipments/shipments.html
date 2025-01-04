@@ -38,7 +38,7 @@
     <p>Click the button below to download the packing list as a PDF:</p>
     <a href="{% url 'packing_list' %}" class="btn">Download Packing List</a>
 
-    
+
      <!-- Dimensions Form Only if unique_pallets exist -->
 
     {% if unique_pallets %}
@@ -52,6 +52,7 @@
               <th>Length (cm)</th>
               <th>Width (cm)</th>
               <th>Height (cm)</th>
+              <th>Weight (kg)</th>
             </tr>
           </thead>
           <tbody>
@@ -61,6 +62,7 @@
               <td><input type="number" name="length_{{ pallet_id }}" min="0"></td>
               <td><input type="number" name="width_{{ pallet_id }}" min="0"></td>
               <td><input type="number" name="height_{{ pallet_id }}" min="0"></td>
+              <td><input type="number" name="weight_{{ pallet_id }}" min="0"></td>
             </tr>
           {% endfor %}
           </tbody>

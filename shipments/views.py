@@ -181,6 +181,7 @@ def packing_list_pdf(request, pallet_id):
         try:
             p_dim = PalletDimension.objects.get(pallet_number=pal_number)
             row['dimension_string'] = f"{p_dim.length_cm} X {p_dim.width_cm} X {p_dim.height_cm} cm"
+            row['weight'] = p_dim.weight_kg
         except PalletDimension.DoesNotExist:
             row['dimension_string'] = "N/A"
 
@@ -210,51 +211,49 @@ def packing_list_pdf(request, pallet_id):
     # views.py
 def save_dimensions(request):
     if request.method == "POST":
-        # We'll parse all keys in request.POST
         dimension_data = {}
         for key, value in request.POST.items():
             if key.startswith("length_"):
-                # e.g., length_PalletA
                 pallet = key.replace("length_", "")
-                if pallet not in dimension_data:
-                    dimension_data[pallet] = {}
+                dimension_data.setdefault(pallet, {})
                 dimension_data[pallet]['length'] = value
             elif key.startswith("width_"):
                 pallet = key.replace("width_", "")
-                if pallet not in dimension_data:
-                    dimension_data[pallet] = {}
+                dimension_data.setdefault(pallet, {})
                 dimension_data[pallet]['width'] = value
             elif key.startswith("height_"):
                 pallet = key.replace("height_", "")
-                if pallet not in dimension_data:
-                    dimension_data[pallet] = {}
+                dimension_data.setdefault(pallet, {})
                 dimension_data[pallet]['height'] = value
+            elif key.startswith("weight_"):
+                pallet = key.replace("weight_", "")
+                dimension_data.setdefault(pallet, {})
+                dimension_data[pallet]['weight'] = value
 
-        # dimension_data now might look like:
+        # Example dimension_data might now be:
         # {
-        #   "PalletA": {"length": "120", "width": "80", "height": "25"},
-        #   "PalletB": {"length": "100", "width": "70", "height": "30"},
+        #   "pallet1": {"length": "120", "width": "80", "height": "25", "weight": "10"},
+        #   "pallet2": {"length": "100", "width": "70", "height": "30", "weight": "8"},
         # }
 
-        # Store them in your model, e.g., PalletDimension or in Shipment if unique
         for pallet_id, dims in dimension_data.items():
-            # Convert strings to integers
-            length_val = int(dims['length']) if dims['length'] else 0
-            width_val = int(dims['width']) if dims['width'] else 0
-            height_val = int(dims['height']) if dims['height'] else 0
+            length_val = int(dims.get('length', 0)) if dims.get('length') else 0
+            width_val  = int(dims.get('width', 0)) if dims.get('width') else 0
+            height_val = int(dims.get('height', 0)) if dims.get('height') else 0
+            weight_val = int(dims.get('weight', 0)) if dims.get('weight') else 0
 
-            # Example: if you have a separate PalletDimension model
+            # Example: If your PalletDimension model has a 'weight_kg' field:
             PalletDimension.objects.update_or_create(
                 pallet_number=pallet_id,
                 defaults={
                     'length_cm': length_val,
                     'width_cm': width_val,
-                    'height_cm': height_val
+                    'height_cm': height_val,
+                    'weight_kg': weight_val,
                 }
             )
 
-        messages.success(request, "Dimensions saved!")
+        messages.success(request, "Dimensions & Weight saved!")
         return redirect('shipments')
 
-    # If GET, just redirect back
     return redirect('shipments')

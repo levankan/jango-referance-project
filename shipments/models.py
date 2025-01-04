@@ -35,6 +35,7 @@ class PalletDimension(models.Model):
     length_cm = models.PositiveIntegerField(null=True, blank=True)
     width_cm = models.PositiveIntegerField(null=True, blank=True)
     height_cm = models.PositiveIntegerField(null=True, blank=True)
+    weight_kg = models.PositiveIntegerField(null=True, blank=True)  # new field
 
     def __str__(self):
         return f"Pallet {self.pallet_number}: {self.length_cm} X {self.width_cm} X {self.height_cm} cm"
