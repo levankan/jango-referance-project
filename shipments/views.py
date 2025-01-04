@@ -40,6 +40,29 @@ def shipments(request):
                     'Pallet': 'pallet'
                 }, inplace=True)
 
+
+                # Check for duplicates in the file itself
+                if df['serial_lot'].duplicated().any():
+                    duplicates = df[df['serial_lot'].duplicated()]['serial_lot'].unique()
+                    return render(request, 'shipments/shipments.html', {
+                        'form': form,
+                        'error': f"Duplicate serial numbers in the uploaded file: {', '.join(duplicates)}"
+                    })
+
+                # Check for duplicates in the database
+                db_duplicates = []
+                for serial in df['serial_lot']:
+                    if Shipment.objects.filter(serial_lot=serial).exists():
+                        db_duplicates.append(serial)
+
+                if db_duplicates:
+                    return render(request, 'shipments/shipments.html', {
+                        'form': form,
+                        'error': f"Duplicate serial numbers found in the database: {', '.join(db_duplicates)}"
+                    })
+
+                    
+
                 # Save data to the database
                 for _, row in df.iterrows():
                     Shipment.objects.create(
