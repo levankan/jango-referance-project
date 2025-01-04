@@ -26,6 +26,13 @@
         <button type="submit">Upload</button>
     </form>
 
+
+    <!-- Clear database button -->
+    <form method="post" action="{% url 'clear_database' %}">
+        {% csrf_token %}
+        <button type="submit" style="color: red;">Clear Database</button>
+    </form>
+
     <p>Click the button below to download the packing list as a PDF:</p>
     <a href="{% url 'packing_list' %}" class="btn">Download Packing List</a>
 

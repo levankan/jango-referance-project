@@ -9,6 +9,8 @@ from weasyprint import HTML
 from django.http import HttpResponse
 from datetime import datetime
 from django.utils.timezone import now
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 
 
@@ -69,6 +71,16 @@ def shipments(request):
     shipments = Shipment.objects.all()
 
     return render(request, 'shipments/shipments.html', {'form': form, 'shipments': shipments})
+
+
+
+def clear_database(request):
+    if request.method == "POST":
+        # Delete all records in the Shipment model
+        Shipment.objects.all().delete()
+        messages.success(request, "All shipment records have been deleted.")
+        return render(request, 'shipments/shipments.html')  # Temporarily render the same page
+
 
 
 
