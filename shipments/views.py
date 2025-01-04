@@ -120,14 +120,19 @@ def packing_list_pdf(request, pallet_id):
     # Fetch shipments for a specific pallet
     shipments = Shipment.objects.filter(pallet=pallet_id)
 
+    current_date = datetime.now()
+
     # Convert the data to a DataFrame
-    df = pd.DataFrame(list(shipments.values('serial_lot', 'item_number', 'cross_reference', 'description', 'qty', 'box', 'pallet')))
+    df = pd.DataFrame(list(shipments.values('serial_lot', 'item_number', 'cross_reference', 'description', 'qty', 'box', 'pallet', 'invoice')))
 
     # Group by 'cross_reference', 'description', and 'pallet' for the pivot table
     pivot_table = df.groupby(['box', 'cross_reference', 'description', 'pallet']).agg(
         total_qty=('qty', 'sum'),  # Sum the quantities for each group
         count_cross_reference=('cross_reference', 'size')  # Count occurrences of cross_reference
     ).reset_index()
+
+    # Collect unique invoice numbers for the pallet
+    unique_invoices = df['invoice'].dropna().unique()
 
     # Convert pivot table to dictionary for passing to template
     pivot_table = pivot_table.to_dict(orient='records')
@@ -140,7 +145,9 @@ def packing_list_pdf(request, pallet_id):
         'shipments': df.to_dict(orient='records'),
         'pivot_table': pivot_table,  # Pass the actual data as a list of dictionaries
         'pallet_id': pallet_id,
-        'total_qty': total_qty  # Pass the total quantity to the template
+        'unique_invoices': unique_invoices,
+        'total_qty': total_qty,  # Pass the total quantity to the template
+        'current_date': current_date,  # Pass the current date to the template
     })
 
     # Generate the PDF

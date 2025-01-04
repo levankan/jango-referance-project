@@ -12,6 +12,10 @@
 <body>
     <h1>Welcome to the Dropdown Form</h1>
 
+    <div id = "movetoshipments">
+        <a href="{% url 'shipments' %}" class="button">Go to Shipments</a>
+    </div>
+
     <!-- Display the form -->
     <form method="post">
         {% csrf_token %}
@@ -41,5 +45,7 @@
             <li>There are no comments.</li>
         {% endfor %}
     </ul>
+
+   
 </body>
 </html>

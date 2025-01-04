@@ -74,3 +74,34 @@ h1 + h1 {
         width: 90%;
     }
 }
+
+
+
+#movetoshipments {
+    text-align: center; /* Center the button horizontally */
+    margin-top: 20px; /* Add some space above the button */
+}
+
+#movetoshipments .button {
+    display: inline-block;
+    padding: 12px 24px; /* Adjust padding for better proportions */
+    font-size: 18px; /* Slightly larger text for better readability */
+    color: #fff; /* White text color */
+    background-color: #28a745; /* Green background */
+    text-decoration: none; /* Remove underline from the link */
+    border-radius: 8px; /* Smooth rounded corners */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for a 3D effect */
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
+}
+
+#movetoshipments .button:hover {
+    background-color: #218838; /* Slightly darker green on hover */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15); /* Slightly deeper shadow on hover */
+    transform: translateY(-2px); /* Lift the button slightly */
+}
+
+#movetoshipments .button:active {
+    background-color: #1e7e34; /* Even darker green when clicked */
+    transform: translateY(0px); /* Remove the lift effect */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Restore original shadow */
+}
