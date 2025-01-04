@@ -4,6 +4,13 @@ import pandas as pd
 from django.shortcuts import render
 from .forms import ExcelUploadForm
 from .models import Shipment
+from django.template.loader import render_to_string
+from weasyprint import HTML
+from django.http import HttpResponse
+from datetime import datetime
+from django.utils.timezone import now
+
+
 
 def shipments(request):
     if request.method == "POST":
@@ -62,3 +69,34 @@ def shipments(request):
     shipments = Shipment.objects.all()
 
     return render(request, 'shipments/shipments.html', {'form': form, 'shipments': shipments})
+
+
+
+def packing_list(request):
+    shipments = Shipment.objects.all()  # Fetch all shipments or filter as needed
+    current_date = datetime.now()
+
+    # Convert your queryset into a pandas DataFrame
+    df = pd.DataFrame(list(shipments.values('box', 'cross_reference', 'pallet', 'description', 'qty')))
+
+    df['qty'] = pd.to_numeric(df['qty'], errors='coerce')
+    
+    # Group by 'box' and 'cross_reference' and aggregate
+    pivot_table = df.groupby(['box', 'cross_reference',  'description', 'pallet']).agg(
+        count_cross_reference=('cross_reference', 'size'),  # Count occurrences of cross_reference in the box
+        total_qty=('qty', 'sum')  # Calculate sum of qty for each group
+    ).reset_index()
+
+    pivot_table = pivot_table.to_dict(orient='records')
+
+    total_qty = df['qty'].sum()
+
+    print(pivot_table)
+
+
+    return render(request, 'shipments/packing_list.html', {
+        'shipments': shipments,
+        'current_date': current_date,
+        'pivot_table': pivot_table,  # Pass the pivot table to the template
+        'total_qty': total_qty,  # Pass the total quantity to the template
+    })

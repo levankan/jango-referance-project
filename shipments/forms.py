@@ -5,3 +5,4 @@ class ExcelUploadForm(forms.Form):
         label="Upload Excel File",
         widget=forms.FileInput(attrs={'accept': '.xls,.xlsx'})
     )
+
