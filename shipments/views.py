@@ -3,7 +3,7 @@
 import pandas as pd
 from django.shortcuts import render
 from .forms import ExcelUploadForm
-from .models import Shipment
+from .models import Shipment, PalletDimension 
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.http import HttpResponse
@@ -40,8 +40,7 @@ def shipments(request):
                     'Pallet': 'pallet'
                 }, inplace=True)
 
-
-                # Check for duplicates in the file itself
+                # Check for duplicates in the file
                 if df['serial_lot'].duplicated().any():
                     duplicates = df[df['serial_lot'].duplicated()]['serial_lot'].unique()
                     return render(request, 'shipments/shipments.html', {
@@ -61,8 +60,6 @@ def shipments(request):
                         'error': f"Duplicate serial numbers found in the database: {', '.join(db_duplicates)}"
                     })
 
-                    
-
                 # Save data to the database
                 for _, row in df.iterrows():
                     Shipment.objects.create(
@@ -81,19 +78,37 @@ def shipments(request):
                         pallet=row['pallet']
                     )
 
-                # Fetch all shipment records from the database
-                shipments = Shipment.objects.all()
+                # After saving Shipments, fetch all shipments
+                shipments_qs = Shipment.objects.all()
 
-                return render(request, 'shipments/shipments.html', {'form': form, 'shipments': shipments, 'success': 'File uploaded and data saved successfully.'})
+                # Find unique pallets from the uploaded DataFrame
+                unique_pallets = df['pallet'].dropna().unique().tolist()
+
+                return render(
+                    request,
+                    'shipments/shipments.html',
+                    {
+                        'form': form,
+                        'shipments': shipments_qs,
+                        'success': 'File uploaded and data saved successfully.',
+                        'unique_pallets': unique_pallets,
+                    }
+                )
             except Exception as e:
-                return render(request, 'shipments/shipments.html', {'form': form, 'error': f"Error processing file: {e}"})
+                return render(request, 'shipments/shipments.html', {
+                    'form': form,
+                    'error': f"Error processing file: {e}"
+                })
     else:
         form = ExcelUploadForm()
 
-    # Fetch all shipment records from the database
-    shipments = Shipment.objects.all()
+    # If GET or no valid form, just render normally
+    shipments_qs = Shipment.objects.all()
+    return render(request, 'shipments/shipments.html', {
+        'form': form,
+        'shipments': shipments_qs
+    })
 
-    return render(request, 'shipments/shipments.html', {'form': form, 'shipments': shipments})
 
 
 
@@ -140,43 +155,106 @@ def packing_list(request):
 
     # New function to generate packing list PDF for each pallet
 def packing_list_pdf(request, pallet_id):
-    # Fetch shipments for a specific pallet
+    from django.shortcuts import get_object_or_404
+    
     shipments = Shipment.objects.filter(pallet=pallet_id)
-
     current_date = datetime.now()
 
     # Convert the data to a DataFrame
-    df = pd.DataFrame(list(shipments.values('serial_lot', 'item_number', 'cross_reference', 'description', 'qty', 'box', 'pallet', 'invoice')))
+    df = pd.DataFrame(
+        list(shipments.values('serial_lot', 'item_number', 'cross_reference', 
+                              'description', 'qty', 'box', 'pallet', 'invoice'))
+    )
 
-    # Group by 'cross_reference', 'description', and 'pallet' for the pivot table
-    pivot_table = df.groupby(['box', 'cross_reference', 'description', 'pallet']).agg(
-        total_qty=('qty', 'sum'),  # Sum the quantities for each group
-        count_cross_reference=('cross_reference', 'size')  # Count occurrences of cross_reference
+    # Group by 'box', 'cross_reference', 'description', 'pallet' for the pivot table
+    pivot_df = df.groupby(['box', 'cross_reference', 'description', 'pallet']).agg(
+        total_qty=('qty', 'sum'),
+        count_cross_reference=('cross_reference', 'size')
     ).reset_index()
 
-    # Collect unique invoice numbers for the pallet
+    # Convert pivot table to dictionary
+    pivot_table = pivot_df.to_dict(orient='records')
+
+    #Merge dimension info for each row
+    for row in pivot_table:
+        pal_number = str(row['pallet'])  # Convert to string if needed
+        try:
+            p_dim = PalletDimension.objects.get(pallet_number=pal_number)
+            row['dimension_string'] = f"{p_dim.length_cm} X {p_dim.width_cm} X {p_dim.height_cm} cm"
+        except PalletDimension.DoesNotExist:
+            row['dimension_string'] = "N/A"
+
+
+    # Unique invoices
     unique_invoices = df['invoice'].dropna().unique()
-
-    # Convert pivot table to dictionary for passing to template
-    pivot_table = pivot_table.to_dict(orient='records')
-
-    # Calculate total quantity and ensure it's numeric
     total_qty = pd.to_numeric(df['qty'], errors='coerce').sum()
 
-    # Generate the HTML for the PDF
+    # Render the PDF
     html = render_to_string('shipments/packing_list_pdf.html', {
         'shipments': df.to_dict(orient='records'),
-        'pivot_table': pivot_table,  # Pass the actual data as a list of dictionaries
+        'pivot_table': pivot_table,
         'pallet_id': pallet_id,
         'unique_invoices': unique_invoices,
-        'total_qty': total_qty,  # Pass the total quantity to the template
-        'current_date': current_date,  # Pass the current date to the template
+        'total_qty': total_qty,
+        'current_date': current_date,
     })
 
-    # Generate the PDF
     pdf = HTML(string=html).write_pdf()
-
-    # Return the PDF as an HTTP response
     response = HttpResponse(pdf, content_type='application/pdf')
-    response['Content-Disposition'] = f'inline; filename="packing_list_{pallet_id}.pdf"'
+    response['Content-Disposition'] = f'inline; filename=\"packing_list_{pallet_id}.pdf\"'
     return response
+
+
+
+
+    # views.py
+def save_dimensions(request):
+    if request.method == "POST":
+        # We'll parse all keys in request.POST
+        dimension_data = {}
+        for key, value in request.POST.items():
+            if key.startswith("length_"):
+                # e.g., length_PalletA
+                pallet = key.replace("length_", "")
+                if pallet not in dimension_data:
+                    dimension_data[pallet] = {}
+                dimension_data[pallet]['length'] = value
+            elif key.startswith("width_"):
+                pallet = key.replace("width_", "")
+                if pallet not in dimension_data:
+                    dimension_data[pallet] = {}
+                dimension_data[pallet]['width'] = value
+            elif key.startswith("height_"):
+                pallet = key.replace("height_", "")
+                if pallet not in dimension_data:
+                    dimension_data[pallet] = {}
+                dimension_data[pallet]['height'] = value
+
+        # dimension_data now might look like:
+        # {
+        #   "PalletA": {"length": "120", "width": "80", "height": "25"},
+        #   "PalletB": {"length": "100", "width": "70", "height": "30"},
+        # }
+
+        # Store them in your model, e.g., PalletDimension or in Shipment if unique
+        for pallet_id, dims in dimension_data.items():
+            # Convert strings to integers
+            length_val = int(dims['length']) if dims['length'] else 0
+            width_val = int(dims['width']) if dims['width'] else 0
+            height_val = int(dims['height']) if dims['height'] else 0
+
+            # Example: if you have a separate PalletDimension model
+            PalletDimension.objects.update_or_create(
+                pallet_number=pallet_id,
+                defaults={
+                    'length_cm': length_val,
+                    'width_cm': width_val,
+                    'height_cm': height_val
+                }
+            )
+
+        messages.success(request, "Dimensions saved!")
+        return redirect('shipments')
+
+    # If GET, just redirect back
+    return redirect('shipments')

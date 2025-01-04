@@ -16,13 +16,6 @@
         <a href="{% url 'shipments' %}" class="button">Go to Shipments</a>
     </div>
 
-    <!-- Display the form -->
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}  <!-- Renders the form as paragraphs -->
-        <button type="submit">Submit</button>
-    </form>
-
     <!-- Display the selected option if form is submitted -->
     {% if selected_option %}
         <h1>Selected project Is: {{ selected_option }}, ID: 2024_{{ id }}</h1>

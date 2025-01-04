@@ -71,6 +71,8 @@
         </tbody>
     </table>
 
+    {% if pivot_table %}
+    {% with pivot_table.0 as first_row %}
     <table>
         <thead>
             <tr>
@@ -85,10 +87,21 @@
                 <td>1</td>
                 <td>{{ total_qty|floatformat:0 }}</td>
                 <td>5 KG</td>
-                <td>120 X 80 X 25</td>
+                <td>
+                    {% if first_row.dimension_string %}
+                        {{ first_row.dimension_string }}
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </td>
             </tr>
         </tbody>
     </table>
+    {% endwith %}
+    {% else %}
+    <p>No data found.</p>
+    {% endif %}
+    
 
     <div class="footer">
         <p><strong>Invoices No:</strong> {{ unique_invoices|join:", " }}</p>

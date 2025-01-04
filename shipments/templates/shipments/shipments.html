@@ -33,8 +33,42 @@
         <button type="submit" style="color: red;">Clear Database</button>
     </form>
 
+
+
     <p>Click the button below to download the packing list as a PDF:</p>
     <a href="{% url 'packing_list' %}" class="btn">Download Packing List</a>
+
+    
+     <!-- Dimensions Form Only if unique_pallets exist -->
+
+    {% if unique_pallets %}
+      <h2>Enter Dimensions for Each Pallet:</h2>
+      <form method="post" action="{% url 'save_dimensions' %}">
+        {% csrf_token %}
+        <table border="1">
+          <thead>
+            <tr>
+              <th>Pallet</th>
+              <th>Length (cm)</th>
+              <th>Width (cm)</th>
+              <th>Height (cm)</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for pallet_id in unique_pallets %}
+            <tr>
+              <td>{{ pallet_id }}</td>
+              <td><input type="number" name="length_{{ pallet_id }}" min="0"></td>
+              <td><input type="number" name="width_{{ pallet_id }}" min="0"></td>
+              <td><input type="number" name="height_{{ pallet_id }}" min="0"></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <button type="submit">Save Dimensions</button>
+      </form>
+    {% endif %}
+
 
     <h2>Shipment Records</h2>
     <table id = "table" border="1">

@@ -18,3 +18,23 @@ class Shipment(models.Model):
 
     def __str__(self):
         return self.Serial_Lot
+
+
+
+
+
+
+
+class PalletDimension(models.Model):
+    """
+    Stores dimension data for each numeric pallet number.
+    The field pallet_number can be a CharField or IntegerField,
+    depending on your use case.
+    """
+    pallet_number = models.CharField(max_length=10, default='Unknown')
+    length_cm = models.PositiveIntegerField(null=True, blank=True)
+    width_cm = models.PositiveIntegerField(null=True, blank=True)
+    height_cm = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Pallet {self.pallet_number}: {self.length_cm} X {self.width_cm} X {self.height_cm} cm"
