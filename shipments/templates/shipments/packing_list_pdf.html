@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Packing List - PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+     <div class="header">
+        <h1>Packing List</h1>
+        <p>Date: {{ current_date|date:"d-m-Y" }}</p>
+    </div>
+
+    <div class="details">
+        <strong>Shipped To:</strong>
+        <p>
+            GKN AEROSPACE<br>
+            ALBAMA<br>
+            3951 AL HWY 229 SOUTH<br>
+            Tallassee, Elmore 36078<br>
+            Country of Destination: USA<br>
+            Incoterms 2010: EXW Tbilisi
+        </p>
+
+        <strong>Ship From:</strong>
+        <p>
+            Aero-Structure Technologies (Cyclone) JSC<br>
+            Mikheil Grigorashvili 27, Samgori District Tbilisi<br>
+            GEORGIA
+        </p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Box #</th>
+                <th>Item P/N</th>
+                <th>Description</th>
+                <th>Qty.</th>
+                <th>Pallet #</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in pivot_table %}
+            <tr>
+                <td>{{ row.box }}</td>
+                <td>{{ row.cross_reference }}</td>
+                <td>{{ row.description }}</td>
+                <td>{{ row.count_cross_reference }}</td>
+                <td>{{ row.pallet }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Pack Content Description</th>
+                <th>Qty.</th>
+                <th>Weight (KG)</th>
+                <th>Dimension (CM)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>{{ total_qty|floatformat:0 }}</td>
+                <td>5 KG</td>
+                <td>120 X 80 X 25</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>Invoices No: PSI16_0006492</p>
+    </div>
+</body>
+</html>

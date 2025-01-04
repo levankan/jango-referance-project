@@ -112,3 +112,41 @@ def packing_list(request):
         'pivot_table': pivot_table,  # Pass the pivot table to the template
         'total_qty': total_qty,  # Pass the total quantity to the template
     })
+
+
+
+    # New function to generate packing list PDF for each pallet
+def packing_list_pdf(request, pallet_id):
+    # Fetch shipments for a specific pallet
+    shipments = Shipment.objects.filter(pallet=pallet_id)
+
+    # Convert the data to a DataFrame
+    df = pd.DataFrame(list(shipments.values('serial_lot', 'item_number', 'cross_reference', 'description', 'qty', 'box', 'pallet')))
+
+    # Group by 'cross_reference', 'description', and 'pallet' for the pivot table
+    pivot_table = df.groupby(['box', 'cross_reference', 'description', 'pallet']).agg(
+        total_qty=('qty', 'sum'),  # Sum the quantities for each group
+        count_cross_reference=('cross_reference', 'size')  # Count occurrences of cross_reference
+    ).reset_index()
+
+    # Convert pivot table to dictionary for passing to template
+    pivot_table = pivot_table.to_dict(orient='records')
+
+    # Calculate total quantity and ensure it's numeric
+    total_qty = pd.to_numeric(df['qty'], errors='coerce').sum()
+
+    # Generate the HTML for the PDF
+    html = render_to_string('shipments/packing_list_pdf.html', {
+        'shipments': df.to_dict(orient='records'),
+        'pivot_table': pivot_table,  # Pass the actual data as a list of dictionaries
+        'pallet_id': pallet_id,
+        'total_qty': total_qty  # Pass the total quantity to the template
+    })
+
+    # Generate the PDF
+    pdf = HTML(string=html).write_pdf()
+
+    # Return the PDF as an HTTP response
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = f'inline; filename="packing_list_{pallet_id}.pdf"'
+    return response
