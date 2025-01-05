@@ -3,22 +3,105 @@
 <head>
     <title>Packing List - PDF</title>
     <style>
+        /* General Styles */
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
         }
+
         h1 {
             text-align: center;
+            font-size: 28px;
+            color: #4CAF50; /* Green color */
+            margin-bottom: 10px;
         }
+
+        p {
+            margin: 5px 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #555; /* Subtle gray for smaller text */
+        }
+
+        /* Details Section */
+        .details-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .details {
+            width: 48%;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .details strong {
+            font-size: 16px;
+            text-decoration: underline;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 14px;
         }
+
         table, th, td {
-            border: 1px solid black;
+            border: 1px solid #ddd;
         }
-        th, td {
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        td {
             padding: 10px;
             text-align: left;
+        }
+
+        /* Alternate row colors */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Footer Styles */
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            margin-top: 30px;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        .footer strong {
+            color: #000;
         }
     </style>
 </head>
@@ -27,28 +110,33 @@
     <div class="header">
         <h1>Packing List</h1>
         <p>Date: {{ current_date|date:"d-m-Y" }}</p>
+        <p>Number: {{ packing_list_number }}</p>
     </div>
 
-    <div class="details">
-        <strong>Shipped To:</strong>
-        <p>
-            GKN AEROSPACE<br>
-            ALBAMA<br>
-            3951 AL HWY 229 SOUTH<br>
-            Tallassee, Elmore 36078<br>
-            Country of Destination: USA<br>
-            Incoterms 2010: EXW Tbilisi
-        </p>
+    <div class="details-container">
+        <!-- Shipped To Section -->
+        <div class="details shipped-to">
+            <strong>Shipped To:</strong>
+            <p>GKN AEROSPACE</p>
+            <p>ALBAMA</p>
+            <p>3951 AL HWY 229 SOUTH</p>
+            <p>Tallassee, Elmore 36078</p>
+            <p>Country of Destination: USA</p>
+            <p>Incoterms 2010: EXW Tbilisi</p>
+        </div>
 
-        <strong>Ship From:</strong>
-        <p>
-            Aero-Structure Technologies (Cyclone) JSC<br>
-            Mikheil Grigorashvili 27, Samgori District Tbilisi<br>
-            GEORGIA
-        </p>
+        <!-- Ship From Section -->
+        <div class="details shipped-from">
+            <strong>Ship From:</strong>
+            <p>Aero-Structure Technologies (Cyclone) JSC</p>
+            <p>Mikheil Grigorashvili 27, Samgori District, Tbilisi</p>
+            <p>Postal Code: 0198</p>
+            <p>GEORGIA</p>
+            <p>ID: 404496121</p>
+        </div>
     </div>
 
-    <!-- First Table: Show all pivot rows (box, item, qty, pallet) -->
+    <!-- First Table -->
     <table>
         <thead>
             <tr>
@@ -72,7 +160,7 @@
         </tbody>
     </table>
 
-    <!-- Second Table: Show only the first row's dimension and weight -->
+    <!-- Second Table -->
     {% if pivot_table %}
         {% with pivot_table.0 as first_row %}
             <table>
@@ -88,7 +176,6 @@
                     <tr>
                         <td>1</td>
                         <td>{{ total_qty|floatformat:0 }}</td>
-                        <!-- Instead of hard-coded weight, use the row’s weight attribute -->
                         <td>
                             {% if first_row.weight %}
                                 {{ first_row.weight }} KG

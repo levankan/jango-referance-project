@@ -161,6 +161,9 @@ def packing_list_pdf(request, pallet_id):
     shipments = Shipment.objects.filter(pallet=pallet_id)
     current_date = datetime.now()
 
+    # Example Packing List Number - replace with actual logic if needed
+    packing_list_number = f"PL-{pallet_id}-{current_date.strftime('%Y%m%d')}"
+
     # Convert the data to a DataFrame
     df = pd.DataFrame(
         list(shipments.values('serial_lot', 'item_number', 'cross_reference', 
@@ -176,7 +179,7 @@ def packing_list_pdf(request, pallet_id):
     # Convert pivot table to dictionary
     pivot_table = pivot_df.to_dict(orient='records')
 
-    #Merge dimension info for each row
+    # Merge dimension info for each row
     for row in pivot_table:
         pal_number = str(row['pallet'])  # Convert to string if needed
         try:
@@ -185,7 +188,6 @@ def packing_list_pdf(request, pallet_id):
             row['weight'] = p_dim.weight_kg
         except PalletDimension.DoesNotExist:
             row['dimension_string'] = "N/A"
-
 
     # Unique invoices
     unique_invoices = df['invoice'].dropna().unique()
@@ -199,12 +201,14 @@ def packing_list_pdf(request, pallet_id):
         'unique_invoices': unique_invoices,
         'total_qty': total_qty,
         'current_date': current_date,
+        'packing_list_number': packing_list_number,  # Add packing list number
     })
 
     pdf = HTML(string=html).write_pdf()
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename=\"packing_list_{pallet_id}.pdf\"'
     return response
+
 
 
 
