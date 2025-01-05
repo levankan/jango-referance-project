@@ -118,6 +118,7 @@ def clear_database(request):
         Shipment.objects.all().delete()
         messages.success(request, "All shipment records have been deleted.")
         return render(request, 'shipments/shipments.html')  # Temporarily render the same page
+       
 
 
 

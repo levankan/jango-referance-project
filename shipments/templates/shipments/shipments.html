@@ -4,10 +4,206 @@
     {% load static %}
     <title>Upload Shipments Excel</title>
     <link rel="stylesheet" href="{% static 'shipments/css/styles.css' %}">
-
-   
+    <style>
+      /* Navbar Styles */
+      .navbar {
+          background-color: #87CEEB; /* Light blue background */
+          padding: 10px 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          border-radius: 5px;
+          margin-bottom: 20px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+  
+      .navbar a {
+          color: white;
+          text-decoration: none;
+          margin-right: 15px;
+          font-size: 16px;
+          font-weight: bold;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px 16px;
+          border-radius: 4px;
+          transition: background-color 0.3s, transform 0.3s;
+      }
+  
+      .navbar a:hover {
+          background-color: #4682B4; /* Darker blue on hover */
+          transform: scale(1.05); /* Slightly increase size */
+      }
+  
+      .navbar form {
+          display: inline-block;
+          margin: 0;
+      }
+  
+      .navbar button {
+          font-size: 16px;
+          font-weight: bold;
+          color: white;
+          text-decoration: none;
+          margin-right: 15px;
+          padding: 8px 16px;
+          border-radius: 4px;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.3s;
+      }
+  
+      .navbar button.upload {
+          background-color: #FFD700; /* Yellow background */
+      }
+  
+      .navbar button.upload:hover {
+          background-color: #FFC107; /* Darker yellow on hover */
+      }
+  
+      .navbar button.clear {
+          background-color: #FF6347; /* Red background */
+      }
+  
+      .navbar button.clear:hover {
+          background-color: #FF4500; /* Darker red on hover */
+      }
+  
+      /* General Heading Styles */
+      h1, h2 {
+          font-family: Arial, sans-serif;
+          color: #333;
+          margin-bottom: 20px;
+      }
+  
+      h1 {
+          font-size: 28px;
+          text-align: center;
+      }
+  
+      h2 {
+          font-size: 20px;
+          margin-top: 30px;
+      }
+  
+      /* Table Styles */
+      table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+          font-size: 16px;
+          text-align: left;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+      }
+  
+      table thead th {
+          background-color: #87CEEB; /* Light blue */
+          color: white;
+          text-align: center;
+          padding: 10px;
+          font-size: 16px;
+          font-weight: bold;
+          text-transform: uppercase;
+      }
+  
+      table tbody td {
+          padding: 10px;
+          border: 1px solid #ddd;
+          text-align: center;
+      }
+  
+      table tbody tr:nth-child(even) {
+          background-color: #f9f9f9;
+      }
+  
+      table tbody tr:nth-child(odd) {
+          background-color: #ffffff;
+      }
+  
+      table tbody tr:hover {
+          background-color: #f1f1f1;
+          cursor: pointer;
+      }
+  
+      /* Success and Error Messages */
+      #success-message {
+          background-color: #d4edda;
+          color: #155724;
+          border: 1px solid #c3e6cb;
+          padding: 15px;
+          border-radius: 5px;
+          text-align: center;
+          margin-bottom: 20px;
+      }
+  
+      #error-message {
+          background-color: #f8d7da;
+          color: #721c24;
+          border: 1px solid #f5c6cb;
+          padding: 15px;
+          border-radius: 5px;
+          text-align: center;
+          margin-bottom: 20px;
+      }
+  
+      /* Form Styling */
+      input[type="number"] {
+          width: 80%;
+          padding: 8px;
+          margin: 5px 0;
+          box-sizing: border-box;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+      }
+  
+      button[type="submit"] {
+          font-size: 16px;
+          font-weight: bold;
+          color: white;
+          text-decoration: none;
+          padding: 10px 20px;
+          border-radius: 5px;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.3s, transform 0.3s;
+      }
+  
+      button[type="submit"].save {
+          background-color: #87CEEB; /* Light blue background */
+      }
+  
+      button[type="submit"].save:hover {
+          background-color: #4682B4; /* Darker blue on hover */
+      }
+  </style>
+  
+  
 </head>
 <body>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <!-- Links -->
+        <a href="{% url 'packing_list' %}">Download Packing List</a>
+
+        <!-- Upload Form -->
+        <form method="post" enctype="multipart/form-data" style="display: inline;">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Upload Shipments</button>
+        </form>
+
+        <!-- Clear Database Button -->
+        <form method="post" action="{% url 'clear_database' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Clear Database</button>
+        </form>
+    </div>
+
     <h1>Upload Shipments Excel File</h1>
 
     <!-- Display success message -->
@@ -20,27 +216,7 @@
         <p id="error-message" style="color: red;">{{ error }}</p>
     {% endif %}
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Upload</button>
-    </form>
-
-
-    <!-- Clear database button -->
-    <form method="post" action="{% url 'clear_database' %}">
-        {% csrf_token %}
-        <button type="submit" style="color: red;">Clear Database</button>
-    </form>
-
-
-
-    <p>Click the button below to download the packing list as a PDF:</p>
-    <a href="{% url 'packing_list' %}" class="btn">Download Packing List</a>
-
-
-     <!-- Dimensions Form Only if unique_pallets exist -->
-
+    <!-- Dimensions Form Only if unique_pallets exist -->
     {% if unique_pallets %}
       <h2>Enter Dimensions for Each Pallet:</h2>
       <form method="post" action="{% url 'save_dimensions' %}">
@@ -71,9 +247,8 @@
       </form>
     {% endif %}
 
-
     <h2>Shipment Records</h2>
-    <table id = "table" border="1">
+    <table id="table" border="1">
         <thead id="thead">
             <tr>
                 <th>Serial/Lot</th>
@@ -115,6 +290,5 @@
             {% endfor %}
         </tbody>
     </table>
-
 </body>
 </html>
