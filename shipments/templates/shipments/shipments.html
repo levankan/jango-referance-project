@@ -17,41 +17,25 @@
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       }
   
-      .navbar a {
-          color: white;
-          text-decoration: none;
-          margin-right: 15px;
+      .navbar a, .navbar button {
           font-size: 16px;
           font-weight: bold;
-          background: none;
-          border: none;
-          cursor: pointer;
+          color: white;
+          text-decoration: none;
           padding: 8px 16px;
           border-radius: 4px;
-          transition: background-color 0.3s, transform 0.3s;
+          border: none;
+          cursor: pointer;
+          transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+  
+      .navbar a {
+          background-color: #4682B4; /* Blue background for links */
       }
   
       .navbar a:hover {
-          background-color: #4682B4; /* Darker blue on hover */
-          transform: scale(1.05); /* Slightly increase size */
-      }
-  
-      .navbar form {
-          display: inline-block;
-          margin: 0;
-      }
-  
-      .navbar button {
-          font-size: 16px;
-          font-weight: bold;
-          color: white;
-          text-decoration: none;
-          margin-right: 15px;
-          padding: 8px 16px;
-          border-radius: 4px;
-          border: none;
-          cursor: pointer;
-          transition: background-color 0.3s, transform 0.3s;
+          background-color: #005f87; /* Darker blue on hover */
+          transform: scale(1.05); /* Slightly larger */
       }
   
       .navbar button.upload {
@@ -70,7 +54,7 @@
           background-color: #FF4500; /* Darker red on hover */
       }
   
-      /* General Heading Styles */
+      /* Heading Styles */
       h1, h2 {
           font-family: Arial, sans-serif;
           color: #333;
@@ -150,7 +134,7 @@
           margin-bottom: 20px;
       }
   
-      /* Form Styling */
+      /* Input and Form Styling */
       input[type="number"] {
           width: 80%;
           padding: 8px;
@@ -160,7 +144,7 @@
           border-radius: 4px;
       }
   
-      button[type="submit"] {
+      button[type="submit"], .print-btn {
           font-size: 16px;
           font-weight: bold;
           color: white;
@@ -169,16 +153,26 @@
           border-radius: 5px;
           border: none;
           cursor: pointer;
-          transition: background-color 0.3s, transform 0.3s;
+          transition: background-color 0.3s ease, transform 0.3s ease;
       }
   
       button[type="submit"].save {
-          background-color: #87CEEB; /* Light blue background */
+          background-color: #87CEEB; /* Light blue */
       }
   
       button[type="submit"].save:hover {
-          background-color: #4682B4; /* Darker blue on hover */
+          background-color: #4682B4; /* Darker blue */
       }
+  
+      .print-btn {
+          background-color: #4CAF50; /* Green background */
+      }
+  
+      .print-btn:hover {
+          background-color: #45a049; /* Darker green */
+          transform: scale(1.05); /* Slightly larger */
+      }
+  
   </style>
   
   
@@ -229,6 +223,7 @@
               <th>Width (cm)</th>
               <th>Height (cm)</th>
               <th>Weight (kg)</th>
+              <th>Print Area</th>
             </tr>
           </thead>
           <tbody>
@@ -239,6 +234,11 @@
               <td><input type="number" name="width_{{ pallet_id }}" min="0"></td>
               <td><input type="number" name="height_{{ pallet_id }}" min="0"></td>
               <td><input type="number" name="weight_{{ pallet_id }}" min="0"></td>
+              <td>
+                <a href="{% url 'packing_list_pdf' pallet_id=pallet_id %}" target="_blank">
+                    <button type="button" class="print-btn">Print</button>
+                </a>
+            </td>
             </tr>
           {% endfor %}
           </tbody>
