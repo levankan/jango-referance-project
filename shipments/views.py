@@ -117,7 +117,7 @@ def clear_database(request):
         # Delete all records in the Shipment model
         Shipment.objects.all().delete()
         messages.success(request, "All shipment records have been deleted.")
-        return render(request, 'shipments/shipments.html')  # Temporarily render the same page
+        return redirect('shipments') # Temporarily render the same page
        
 
 
