@@ -102,12 +102,16 @@ def shipments(request):
     else:
         form = ExcelUploadForm()
 
-    # If GET or no valid form, just render normally
+    # Check if there are shipments in the database
     shipments_qs = Shipment.objects.all()
+    unique_pallets = Shipment.objects.values_list('pallet', flat=True).distinct() if shipments_qs.exists() else None
+
     return render(request, 'shipments/shipments.html', {
         'form': form,
-        'shipments': shipments_qs
+        'shipments': shipments_qs,
+        'unique_pallets': unique_pallets,
     })
+
 
 
 
