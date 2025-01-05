@@ -120,6 +120,7 @@ def clear_database(request):
     if request.method == "POST":
         # Delete all records in the Shipment model
         Shipment.objects.all().delete()
+        PalletDimension.objects.all().delete()
         messages.success(request, "All shipment records have been deleted.")
         return redirect('shipments') # Temporarily render the same page
        
