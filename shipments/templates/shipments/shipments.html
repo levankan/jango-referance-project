@@ -232,21 +232,25 @@
                 <td>{{ pallet_id }}</td>
                 <td>
                     <input type="number" name="length_{{ pallet_id }}" min="0" 
+                           placeholder="Length (cm)"
                            value="{% for dim in pallet_dimensions %}{% if dim.pallet_number == pallet_id %}{{ dim.length_cm }}{% endif %}{% endfor %}">
                 </td>
                 <td>
                     <input type="number" name="width_{{ pallet_id }}" min="0" 
+                           placeholder="Width (cm)"
                            value="{% for dim in pallet_dimensions %}{% if dim.pallet_number == pallet_id %}{{ dim.width_cm }}{% endif %}{% endfor %}">
                 </td>
                 <td>
                     <input type="number" name="height_{{ pallet_id }}" min="0" 
+                           placeholder="Height (cm)"
                            value="{% for dim in pallet_dimensions %}{% if dim.pallet_number == pallet_id %}{{ dim.height_cm }}{% endif %}{% endfor %}">
                 </td>
                 <td>
                     <input type="number" name="weight_{{ pallet_id }}" min="0" 
+                           placeholder="Weight (kg)"
                            value="{% for dim in pallet_dimensions %}{% if dim.pallet_number == pallet_id %}{{ dim.weight_kg }}{% endif %}{% endfor %}">
                 </td>
-                <td>
+                <td>                
                     <a href="{% url 'packing_list_pdf' pallet_id=pallet_id %}" target="_blank">
                         <button type="button" class="print-btn">Print</button>
                     </a>
