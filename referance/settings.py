@@ -17,7 +17,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATIC_URL = '/static/'  # URL for serving static files
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     '/home/levani/Desktop/Django/referance/static',
 ]
